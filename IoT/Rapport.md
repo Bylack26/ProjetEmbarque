@@ -48,4 +48,9 @@ Si nous souhaitons débugger on utilisera la commande: ***make debug*** puis nou
 ***gdb-multiarch ./build/kernel.elf***
 et en se connectant à la board par tcp avec la commande ***target remote :1234***, signifiant que nous nous connectons à un programme sur le port 1234 de localhost. Nous pouvons alors envoyer des commandes pour manipuler l'exécution de notre programme.
 
+### Les fonctions __inline__
+
+Dans le fichier main.h, il y a des fonctions notés __\_\_inline\_\___. Cela signifie que lors de la compilation, lorsque ces fonctions sont appelées, au lieu de mettre un appel à cette fonction le compilateur va plutôt "copier" le corps de la fonction à l'endroit où elle est appelée (__\_\_attribute\_\_((always\_inline))__ force le compilateur à ***inliner*** la fonction même si ce n'est pas optimisé). Ca évite de mulitplier les sauvegardes de contextes et dans le cas de la programmation embarquée, la taille de la pile n'est pas aussi importante que sur un PC.
+ 
+
 ## Deuxième semaine
