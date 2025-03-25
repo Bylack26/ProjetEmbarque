@@ -54,3 +54,18 @@ Dans le fichier main.h, il y a des fonctions notés __\_\_inline\_\___. Cela sig
  
 
 ## Deuxième semaine
+
+### Interruptions au niveau de UART
+
+Registres pour les interruptions de UART
+UARTIMSC 0x38
+UARTRIS 0x3C
+UARTMIS 0x40
+UARTICR 0x44
+
+### Interruptions au niveau du VIC
+
+Adrese du VIC 0xFFFFFF00
+
+### Interruptions au niveau du CPU
+

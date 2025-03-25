@@ -47,7 +47,10 @@ irq_handler_addr: .word _isr_handler
 fiq_handler_addr: .word _fiq_handler
 
 _isr_handler:
-    b .  // unexpected interrupt occurred
+    sub lr,lr,#4
+    stmfd   sp!, {r0-r12, lr}
+    bl isr
+    ldmfd    sp!, {r0-r12, pc}^ 
 
 _unused_handler:
     b .  // unused interrupt occurred

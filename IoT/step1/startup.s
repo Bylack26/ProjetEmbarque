@@ -33,7 +33,7 @@ _reset_handler:
     * Initialize the Current Program Status Register,
     * Set the core in the SYS_MODE, with all interrupts disabled,
     */
-	msr     cpsr_c,#(CPSR_SYS_MODE | CPSR_IRQ_FLAG | CPSR_FIQ_FLAG)
+	msr     cpsr_c,#(CPSR_SYS_MODE | CPSR_FIQ_FLAG)
 	/*
      * Set the stack for the current* mode (SYS_MODE)
      * Find the definition of the symbol "stack_top"

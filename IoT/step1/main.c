@@ -13,6 +13,7 @@
  */
 #include "main.h"
 #include "uart.h"
+#include "isr.h"
 
 extern uint32_t irq_stack_top;
 extern uint32_t stack_top;
@@ -40,11 +41,13 @@ void _start(void) {
   check_stacks();
   uarts_init();
   uart_enable(UART0);
+  uart_enable(UART1);
+  uart_enable(UART2);
+  vic_setup_irqs();
   for (;;) {
-    uart_receive(UART0, &c);
-    uart_send(UART0, c);
-    uart_send(UART0, c);
+    core_halt();
   }
+
 }
 
 void panic() {

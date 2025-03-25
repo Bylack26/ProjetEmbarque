@@ -41,4 +41,9 @@
 #define UART_DR 0x00 // ???
 #define UART_FR 0x18 // ???
 
+#define UARTIMSC 0x38
+#define UARTRIS 0x3C
+#define UARTMIS 0x40
+#define UARTICR 0x44
+
 #endif /* UART_MMIO_H_ */
