@@ -46,4 +46,6 @@
 #define UARTMIS 0x40
 #define UARTICR 0x44
 
+#define UARTIMSCRXIM (1<< 4)
+
 #endif /* UART_MMIO_H_ */

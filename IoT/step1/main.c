@@ -24,11 +24,9 @@ void check_stacks() {
   addr = &stack_top;
   if (addr >= memsize)
     panic();
-/*
-  addr = &irq_stack_top;
-  if (addr >= memsize)
-    panic();
-*/
+  // addr = &irq_stack_top;
+  // if (addr >= memsize)
+  //   panic();
 }
 
 /**
@@ -41,9 +39,10 @@ void _start(void) {
   check_stacks();
   uarts_init();
   uart_enable(UART0);
-  uart_enable(UART1);
-  uart_enable(UART2);
+  // uart_enable(UART1);
+  // uart_enable(UART2);
   vic_setup_irqs();
+  uart_send_string(UART0, "\nThe system is now running... \n");
   for (;;) {
     core_halt();
   }

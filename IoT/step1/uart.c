@@ -31,6 +31,7 @@ void uart_init(uint32_t uartno, void* bar) {
   struct uart*uart = &uarts[uartno];
   uart->uartno = uartno;
   uart->bar = bar;
+  mmio_write32(uart->bar, UARTIMSC, 0x0000);
   // no hardware initialization necessary
   // when running on QEMU, the UARTs are
   // already initialized, as long as we
@@ -47,12 +48,14 @@ void uart_enable(uint32_t uartno) {
   struct uart*uart = &uarts[uartno];
   // nothing to do here, as long as
   // we do not rely on interrupts
+  mmio_write32(uart->bar, UARTIMSC, UARTIMSCRXIM);
 }
 
 void uart_disable(uint32_t uartno) {
   struct uart*uart = &uarts[uartno];
   // nothing to do here, as long as
   // we do not rely on interrupts
+  mmio_write32(uart->bar, UARTIMSC, 0);
 }
 
 void uart_receive(uint8_t uartno, char *pt) {
@@ -90,4 +93,5 @@ void uart_send_string(uint8_t uartno, const char *s) {
     s++;
   }
 }
+
 

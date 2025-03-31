@@ -76,10 +76,9 @@ uint32_t vic_load_irqs(){
  */
 void vic_setup_irqs() {
   vic_enable_irq(UART0_IRQ, affiche ,"salut0");
-  vic_enable_irq(UART1_IRQ, affiche ,"salut1");
-  vic_enable_irq(UART2_IRQ, affiche ,"salut2");
+  // vic_enable_irq(UART1_IRQ, affiche ,"salut1");
+  // vic_enable_irq(UART2_IRQ, affiche ,"salut2");
   //vic_enable_irq(TIMER0_IRQ, affiche, "salutTimer0");
-  core_enable_irqs();
   _irqs_setup();
 }
 
@@ -101,7 +100,9 @@ void vic_disable_irq(uint32_t irq) {
 void affiche(uint32_t irq, void* data){
   switch(irq ){
     case UART0_IRQ:
-      uart_send_string(0, (char*)data);
+      char c;
+      uart_receive(UART0, &c);
+      uart_send(UART0, c);
       break;
     case UART1_IRQ:
       uart_send_string(1, (char*)data);
