@@ -54,18 +54,19 @@ Dans le fichier main.h, il y a des fonctions notés __\_\_inline\_\___. Cela sig
  
 
 ## Deuxième semaine
+(Note: Cette partie du rapport sera moins détaillé, il y a beaucoup de travail à faire en cette fin de semestre)
 
-### Interruptions au niveau de UART
+### Préparation des interruptions
+Dans cette première partie nousa allons voir comment activer les interruptions et les utiliser:
 
-Registres pour les interruptions de UART
-UARTIMSC 0x38
-UARTRIS 0x3C
-UARTMIS 0x40
-UARTICR 0x44
+Dans un premier temps nous devons modifier le fichier ***kernerl.ld*** afin d'allouer un espace en mémoire suffisant pour une seconde pile, dédiée aux interruptions. L'adresse de base de cette pile est stocké dans la variable __irq\_stack\_top__ .
+Ensuite nous y ajoutons aussi le code du fichier irq.s (dans la partie .text) qui contient des définitions pour les fonctions de mise en attente d'une interruption pour le processeur (__\_wfi__), de la mise en palce des interruptions au niveau du processeur (__\_irqs\_setup__) et d'activation et de désactivation des interruptions, toujours au niveau du processeur.
 
-### Interruptions au niveau du VIC
+La prochaine étape consiste à activer les interruptions au niveau du VIC (le contrôleur d'interruptions). Pour cela il faut éditer les fichiers ***isr.c***, ***isr.h*** et ***isr-mmio.h***. Dans les ifhcier ".h", nous définissons différentes constantes notamment les adressess de plusieurs registres du VIC, permettants de gérer quelles interruptions sont actives (en IRQ, FIQ, ou pour voir quelles interruptions ont été activée et effectivement reçues (encoding "one hot")), ainsi que certains regsitres permettant de désactiver les interruptions. Il y en aura donc une par bit soit 32 interruptions possibles (on retrouve des timers, les uarts, etc..., les périphérique connectés sont trouvables dans la documentation de la board, puisque le constructeur choisit les branchements). Les adresses de ces registres sont trouvables dans la documentation du VIC.
+On définit aussi un ensemble de masques correspondant aux adresses auxquelles sont branchés les composants de la board ainsi que le numéro du bit correspondant à chaque interruptions qui nous intéressent (par exemple sur la board du cours on trouve que l'interruption de l'UART0 est associé au bit 12 des registres du VIC).
 
-Adrese du VIC 0xFFFFFF00
+Enfin, nous allons devoir faire quelques changements dans le fichier
 
-### Interruptions au niveau du CPU
+### Handlers
+Nous pouvons maintenant définir des handlers pour nos différentes interruptions 
 
