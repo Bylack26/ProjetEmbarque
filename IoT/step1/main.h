@@ -17,8 +17,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
-
-typedef uint8_t bool_t;
+#include "comm.h"
 
 void panic();
 void kprintf(const char *fmt, ...);

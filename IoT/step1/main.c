@@ -37,12 +37,10 @@ void check_stacks() {
 void _start(void) {
   char c;
   check_stacks();
-  uarts_init();
-  uart_enable(UART0);
-  // uart_enable(UART1);
-  // uart_enable(UART2);
-  vic_setup_irqs();
-  uart_send_string(UART0, "\nThe system is now running... \n");
+  uarts_init(); // Configuration of all UARTs (for now)
+  uart_enable(UART0); // Enable interuptions for this UART
+  vic_setup_irqs(); // Setup the vic for the interuptions
+  // uart_send_string(UART0, "\nThe system is now running... \n"); //Just a print to be sure
   for (;;) {
     core_halt();
   }

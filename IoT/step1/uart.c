@@ -18,16 +18,13 @@
 
 
 
-struct uart {
-  uint8_t uartno; // the UART numéro
-  void* bar;      // base address register for this UART
-};
 
-static
-struct uart uarts[NUARTS];
 
-static
-void uart_init(uint32_t uartno, void* bar) {
+static struct uart uarts[NUARTS];
+static struct event_uart events[NUARTS];
+
+
+static void uart_config(uint32_t uartno, void* bar) {
   struct uart*uart = &uarts[uartno];
   uart->uartno = uartno;
   uart->bar = bar;
@@ -39,9 +36,9 @@ void uart_init(uint32_t uartno, void* bar) {
 }
 
 void uarts_init() {
-  uart_init(UART0,UART0_BASE_ADDRESS);
-  uart_init(UART1,UART1_BASE_ADDRESS);
-  uart_init(UART2,UART2_BASE_ADDRESS);
+  uart_config(UART0,UART0_BASE_ADDRESS);
+  uart_config(UART1,UART1_BASE_ADDRESS);
+  uart_config(UART2,UART2_BASE_ADDRESS);
 }
 
 void uart_enable(uint32_t uartno) {
@@ -93,5 +90,20 @@ void uart_send_string(uint8_t uartno, const char *s) {
     s++;
   }
 }
+
+void uart_init(uint8_t no, void (*rl)(void *cookie), void (*wl)(void *cookie), void *cookie){
+  events[no] = (struct event_uart){no, rl, wl, cookie};
+}
+
+
+bool_t uart_read(uint8_t no, uint8_t* bits){
+    return 1;
+}
+
+bool_t uart_write(uint8_t no, uint8_t* bits){
+    return 1;
+}
+
+
 
 

@@ -74,3 +74,25 @@ On défini maintenant les actions spécifique à chaque interruptions. Dans notr
 
 Au moment où j'écris ces lignes l'analyse de l'encodage des caractères et de certaines chaînes n'a pas pû être fais par manqua de temps. La seule chose qui a été remarqué est que les flèches semble redémarrer le programme.
 
+## Troisième semaine
+
+(Disclaimer) Il semblerait que le comportement des flèches soit en réalité un bug.
+
+### Programmation evénementielle
+
+Dans cette troisième partie nous allons mettre en place une interface pour faciliter le développement d'un programme sur la carte. Il s'agit désormais de cacher le comportement des UARTs lors des lectures et écritures, en masquant les activation et désactivation des interruptions. Nous voulons aussi limiter le risque de perte de données en bufferisant les écritures et lectures de l'UART. De fait, le nouveau système mettra en place des évenements auxquels "s'abonneront" des listeners. Ce sera à l'utilisateur de définir le comportement de ces listeners en profitant de l'interface fournie.
+
+La fonction __uart\_init__ à pour but d'associer à chaque uart un listener à appeler lorsque des données sont disponibles dans le buffer de réception, c'est à dire lorsque le buffer est non-vide (__read\_listener__ == __rl__), et un listener appelé lorsqu'il est possible d'écrire dans le buffer d'émission (__write\_listener__ == __wl__), c'est à dire lorsque le taux de remplissage du buffer à passé un seuil. Les fonctions __uart\_read__ et __uart\_write__ seront utilisées au mieux dans le contexte de ces listeners (définis par l'utilisateur). Par conséquent chaque UART disposera de deux buffers (circulaire pour éviter des problèmes de synchronisation) un pour l'émission et l'autre en réception.
+
+Voici le fil d'exécution des évènements:
+
+1. Une interruption arrive 
+2. Le traitant d'interruptions va (selon l'interruptions) lancer une lecture en stockant le résultat dans le buffer de lecture ou tenter une écriture depuis le buffer d'écriture, associé à l'UART (fonction de la semaine 2)
+3. Quand l'opération aboutit, selon l'état des buffers le listener associé est appelé (en attendant d'avoir un liste d'event).
+
+La solution est donc:
+
+1. Réutiliser les interruptions comme réalisées plus haut. Modifier la structure d'UART pour prendre en compte les deux buffers.
+2. Modifier le traitant pour lire/ écrire et mettre à jour les buffers correctement.
+3. Appeler dans le traitant les listeners lorsque nécessaire
+

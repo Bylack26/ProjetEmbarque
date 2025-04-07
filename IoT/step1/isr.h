@@ -95,4 +95,6 @@ void affiche(uint32_t, void*);
 
 uint32_t vic_load_irqs();
 
+void trigger_event(uint32_t irq, void* data);
+
 #endif /* ISR_H_ */

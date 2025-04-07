@@ -24,6 +24,31 @@
 #define UART1 1
 #define UART2 2
 
+struct uart {
+  uint8_t uartno; // the UART numbuer
+  void* bar;      // base address register for this UART
+};
+
+struct event_uart {
+  uint8_t no;
+  void (*rl)(void *cookie);
+  void (*wl)(void *cookie);
+  void *cookie;
+};
+
+struct event {
+  void* cookie;
+  void (*react)(void* cookie);
+  uint32_t eta; // Estimated Time of Arrival
+};
+
+struct queue {
+  uint32_t head,tail;
+  struct event events[QUEUE_SIZE];
+};
+
+
+
 /*
  * Receives a one-byte character, which is compatible
  * with ASCII encoding. This function blocks, spinning,
@@ -66,5 +91,14 @@ void uart_enable(uint32_t uartno);
  * Nothing to do on QEMU until we use interrupts...
  */
 void uart_disable(uint32_t uartno);
+
+void uart_init(uint8_t no,
+               void (*rl)(void *cookie),
+               void (*wl)(void *cookie),
+               void *cookie);
+               
+bool_t uart_read(uint8_t no, uint8_t* bits);// Put the character read from the buffer inside the bits
+
+bool_t uart_write(uint8_t no, uint8_t* bits); //Write the given bits into the buffer
 
 #endif /* UART_H_ */

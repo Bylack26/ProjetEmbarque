@@ -16,6 +16,7 @@
 #include "uart.h"
 #include "isr.h"
 #include "isr-mmio.h"
+#include "comm.h"
 
 /*
  * Assembly functions:
@@ -75,7 +76,7 @@ uint32_t vic_load_irqs(){
  * sides.
  */
 void vic_setup_irqs() {
-  vic_enable_irq(UART0_IRQ, affiche ,"salut0");
+  vic_enable_irq(UART0_IRQ, trigger_event ,"salut0");
   // vic_enable_irq(UART1_IRQ, affiche ,"salut1");
   // vic_enable_irq(UART2_IRQ, affiche ,"salut2");
   //vic_enable_irq(TIMER0_IRQ, affiche, "salutTimer0");
@@ -112,4 +113,19 @@ void affiche(uint32_t irq, void* data){
       break;
   }
 }
+
+void trigger_event(uint32_t irq, void* data){
+    switch(irq ){
+    case UART0_IRQ:
+
+      break;
+    case UART1_IRQ:
+
+      break;
+    case UART2_IRQ:
+
+      break;
+  }
+}
+
 
