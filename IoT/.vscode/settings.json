@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "*.s": "arm",
+        "main.h": "c",
+        "comm.h": "c"
+    }
+}

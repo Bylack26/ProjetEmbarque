@@ -22,3 +22,8 @@ uint8_t ring_get(struct ring_buffer* buffer) {
     buffer->tail = next;
     return bits;
 }
+
+bool_t ring_under_treshold(struct ring_buffer* buffer, uint8_t threshold){
+    uint32_t size = (buffer->head - buffer->tail + RING_SIZE) % RING_SIZE;
+    return size < threshold;
+}

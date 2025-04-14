@@ -4,8 +4,8 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#define RING_SIZE 255
-#define QUEUE_SIZE 32
+#define RING_SIZE 10
+
 typedef uint8_t bool_t;
 
 struct ring_buffer {
@@ -21,4 +21,8 @@ void ring_put(uint8_t bits, struct ring_buffer* buffer);
 
 uint8_t ring_get(struct ring_buffer* buffer);
 
-#endif COMM_H
+
+
+bool_t ring_under_treshold(struct ring_buffer* buffer, uint8_t threshold);
+
+#endif

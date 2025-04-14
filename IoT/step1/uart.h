@@ -24,15 +24,22 @@
 #define UART1 1
 #define UART2 2
 
+#define SEUIL RING_SIZE/2
+#define QUEUE_SIZE 32
+#include "comm.h"
+
 struct uart {
   uint8_t uartno; // the UART numbuer
   void* bar;      // base address register for this UART
+  struct ring_buffer rx;
+  struct ring_buffer tx;
+  bool_t ready_to_write;
 };
 
 struct event_uart {
   uint8_t no;
-  void (*rl)(void *cookie);
-  void (*wl)(void *cookie);
+  void (*rl)(uint8_t no, void *cookie);
+  void (*wl)(uint8_t no, void *cookie);
   void *cookie;
 };
 
@@ -45,7 +52,25 @@ struct event {
 struct queue {
   uint32_t head,tail;
   struct event events[QUEUE_SIZE];
+
 };
+
+struct write_cookie{
+  uint8_t no;
+  uint8_t* bits;
+  uint32_t max;
+};
+
+struct empty_cookie{
+  struct write_cookie* w_c;
+  void (*wl)(uint8_t no, void *cookie);
+};
+
+struct read_cookie{
+  uint8_t no;
+  char* c;
+};
+
 
 
 
@@ -93,12 +118,31 @@ void uart_enable(uint32_t uartno);
 void uart_disable(uint32_t uartno);
 
 void uart_init(uint8_t no,
-               void (*rl)(void *cookie),
-               void (*wl)(void *cookie),
+               void (*rl)(uint8_t no, void *cookie),
+               void (*wl)(uint8_t no, void *cookie),
                void *cookie);
                
 bool_t uart_read(uint8_t no, uint8_t* bits);// Put the character read from the buffer inside the bits
 
-bool_t uart_write(uint8_t no, uint8_t* bits); //Write the given bits into the buffer
+bool_t uart_write(uint8_t no, uint8_t* bits, uint32_t nb_to_write); //Write the given bits into the buffer
 
+bool_t triggers(uint8_t no);
+
+struct event_uart get_events(uint8_t no);
+
+struct uart* get_uart(uint8_t no);
+
+bool_t event_empty();
+
+bool_t event_full();
+
+void event_put(struct event bits);
+
+struct event event_get();
+
+struct event_uart* get_uart_event(uint8_t no);
+
+void re_write(void* cookie);
+
+void empty_react(void* cookie);
 #endif /* UART_H_ */

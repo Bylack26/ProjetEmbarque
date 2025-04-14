@@ -98,26 +98,21 @@ void vic_disable_irq(uint32_t irq) {
   mmio_write32((void*)VIC_BASE_ADDR, VICINTCLEAR, (1 << irq));
 }
 
-void affiche(uint32_t irq, void* data){
-  switch(irq ){
-    case UART0_IRQ:
-      char c;
-      uart_receive(UART0, &c);
-      uart_send(UART0, c);
-      break;
-    case UART1_IRQ:
-      uart_send_string(1, (char*)data);
-      break;
-    case UART2_IRQ:
-      uart_send_string(2, (char*)data);
-      break;
-  }
+void read_react(void* cookie){
+  struct read_cookie* r_c = (struct read_cookie* ) cookie;
+  get_uart_event(UART0)->rl(r_c->no, r_c->c);
 }
 
 void trigger_event(uint32_t irq, void* data){
     switch(irq ){
     case UART0_IRQ:
-
+      char c;
+      uart_receive(UART0, &c);
+      struct uart* stu = get_uart(UART0);
+      ring_put((uint8_t)c, &stu->rx);
+      struct read_cookie r_c = {UART0, &c};
+      struct event new_event = {&r_c, read_react, 0};
+      event_put(new_event);
       break;
     case UART1_IRQ:
 

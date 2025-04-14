@@ -96,3 +96,28 @@ La solution est donc:
 2. Modifier le traitant pour lire/ écrire et mettre à jour les buffers correctement.
 3. Appeler dans le traitant les listeners lorsque nécessaire
 
+## Quatrième semaine
+
+### Interface uart évènementielle
+
+Pour mettre en place un système évènementiel voici le flot d'éxécution:
+
+Pour le read:
+
+\*Interruption\*
+- Lorsque des octets parviennent depuis l'UART, lors de l'interruption, ces octets sont stockés dans un buffer.
+- Une fois l'opération terminée, un événement LECTURE est ajouté à la queue des événements (__event\_queue__).
+
+\*Fin d'Interruption\*
+- De retour dans le flot d'éxécution normal, un événement est retiré de la queue.
+- Si il s'agit d'une LECTURE, la fonction __read\_listener__  sera appelée(il faudra alors lire le contenu du buffer au moyen de __uart\_read__, sinon la file risque de se bloquer)
+
+Pour le write:
+- L'utilisateur appel le write pour écrire une quantité de données. Elles sont écrites dans un buffer.
+- Si l'écriture n'a pas pu aboutir faute de place dans le buffer, un événement de VIDAGE est ajouté à la pile pour vider le buffer et __uart\_write__ renvoie faux.
+- Quand le VIDAGE est fini, un évènement REPRISE est ajouté à la queue pour indiquer qu'une écriture est de nouveau disponible et ce sera au __write\_listener__ de décider que faire lors de la reprise (l'avancement de l'écriture est sauvegardé dans le cookie)
+
+Il est à noter que lorsqu'une écriture renvoie faux pour la première fois toute les écritures successive renverront faux en empilant un événement WRITE ne demandant pas à vider le buffer. Seul l'exécution de l'événement de vidage peux réactiver les écritures via __uart\_write__. Ainsi si une écriture arrive avant l'exécution du listener, elle échouera immédiatemment sans empilé un nouveau listener. Quand un tel événement s'exécute, si le listener n'a pas été exécuté il échouera à son tour et l'évènement se remettra en fin de queue permettant au listener de remonté (on a ainsi une forme de priorité)
+
+On doit donc voir que les écritures n'apparaissent pas dans le terminal au fur et à mesure puisqu'elles sont flushées lorsque le buffer est plein (9 caractères à la fois dans notre cas en fonction de la taille du buffer).
+

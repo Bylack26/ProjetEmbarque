@@ -74,4 +74,9 @@ void mmio_clear(void* bar, uint32_t offset, uint32_t bits) {
   *((uint32_t*)(bar+offset)) = value;
 }
 
+
+void trigger_listener(); 
+void write_listener(uint8_t no, void* cookie);
+void read_listener(uint8_t no, void* cookie);
+void event_pop();
 #endif /* MAIN_H_ */
